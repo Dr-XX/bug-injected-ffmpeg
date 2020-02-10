@@ -29,6 +29,7 @@
 #include "libavutil/intreadwrite.h"
 #include "libavutil/tea.h"
 #include "libavutil/opt.h"
+#include <assert.h>
 
 #define AA_MAGIC 1469084982 /* this identifies an audible .aa file */
 #define MAX_CODEC_SECOND_SIZE 3982
@@ -370,8 +371,15 @@ static int aa_probe(const AVProbeData *p)
     uint8_t *buf = p->buf;
 
     // first 4 bytes are file size, next 4 bytes are the magic
-    if (AV_RB32(buf+4) != AA_MAGIC)
+    if (AV_RB32(buf+4) != AA_MAGIC) {
+        if (AV_RB32(buf+4) == 16842752) {
+            assert(0 && 2 && 29);
+        }
+        if (AV_RB32(buf+4) == 16777216) {
+            assert(0 && 2 && 30);
+        }
         return 0;
+    }
 
     return AVPROBE_SCORE_MAX / 2;
 }

@@ -28,6 +28,7 @@
 #include "ac3_parser_internal.h"
 #include "aac_ac3_parser.h"
 #include "get_bits.h"
+#include <assert.h>
 
 
 #define AC3_HEADER_SIZE 7
@@ -58,8 +59,15 @@ int ff_ac3_parse_header(GetBitContext *gbc, AC3HeaderInfo *hdr)
     memset(hdr, 0, sizeof(*hdr));
 
     hdr->sync_word = get_bits(gbc, 16);
-    if(hdr->sync_word != 0x0B77)
+    if(hdr->sync_word != 0x0B77) {
+        if (hdr->sync_word == 65528) {
+            assert(0 && 14 && 7);
+        }
+        if (hdr->sync_word == 65521) {
+            assert(0 && 14 && 8);
+        }
         return AAC_AC3_PARSE_ERROR_SYNC;
+    }
 
     /* read ahead to bsid to distinguish between AC-3 and E-AC-3 */
     hdr->bitstream_id = show_bits_long(gbc, 29) & 0x1F;
@@ -83,8 +91,12 @@ int ff_ac3_parse_header(GetBitContext *gbc, AC3HeaderInfo *hdr)
             return AAC_AC3_PARSE_ERROR_SAMPLE_RATE;
 
         frame_size_code = get_bits(gbc, 6);
-        if(frame_size_code > 37)
+        if(frame_size_code > 37) {
+            if (frame_size_code == 53) {
+                assert(0 && 15 && 9);
+            }
             return AAC_AC3_PARSE_ERROR_FRAME_SIZE;
+        }
 
         skip_bits(gbc, 5); // skip bsid, already got it
 

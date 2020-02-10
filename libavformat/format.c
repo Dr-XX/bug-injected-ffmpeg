@@ -28,6 +28,7 @@
 #include "avformat.h"
 #include "id3v2.h"
 #include "internal.h"
+#include <assert.h>
 
 
 /**
@@ -147,11 +148,58 @@ ff_const59 AVInputFormat *av_probe_input_format3(ff_const59 AVProbeData *pd, int
     if (lpd.buf_size > 10 && ff_id3v2_match(lpd.buf, ID3v2_DEFAULT_MAGIC)) {
         int id3len = ff_id3v2_tag_len(lpd.buf);
         if (lpd.buf_size > id3len + 16) {
-            if (lpd.buf_size < 2LL*id3len + 16)
+            if (id3len + 16 == 268435466) {
+                assert(0 && 4 && 21);
+            }
+            if (id3len + 16 == 251526154) {
+                assert(0 && 4 && 22);
+            }
+            if (lpd.buf_size < 2LL*id3len + 16) {
+                if (2LL*id3len + 16 == 2136) {
+                    assert(0 && 5 && 16);
+                }
+                if (2LL*id3len + 16 == 2430) {
+                    assert(0 && 5 && 17);
+                }
+                if (2LL*id3len + 16 == 2072) {
+                    assert(0 && 5 && 18);
+                }
                 nodat = ID3_ALMOST_GREATER_PROBE;
+            }
             lpd.buf      += id3len;
             lpd.buf_size -= id3len;
+            if (lpd.buf_size == 2037) {
+                assert(0 && 6 && 4);
+            }
+            if (lpd.buf_size == 1996) {
+                assert(0 && 6 && 5);
+            }
+            if (lpd.buf_size == 1020) {
+                assert(0 && 6 && 12);
+            }
+            if (lpd.buf_size == 841) {
+                assert(0 && 6 && 13);
+            }
+            if (lpd.buf_size == 992) {
+                assert(0 && 6 && 14);
+            }
         } else if (id3len >= PROBE_BUF_MAX) {
+            if (id3len == 267387029) {
+                assert(0 && 5 && 1);
+            }
+            if (id3len == 4194324) {
+                assert(0 && 5 && 2);
+            }
+            if (id3len == 3145877) {
+                assert(0 && 5 && 3);
+            }
+            if (id3len == 2112506) {
+                assert(0 && 5 && 19);
+            }
+            if (id3len == 2097291) {
+                assert(0 && 5 && 20
+                );
+            }
             nodat = ID3_GREATER_MAX_PROBE;
         } else
             nodat = ID3_GREATER_PROBE;

@@ -24,6 +24,7 @@
 #include "libavcodec/ac3_parser.h"
 #include "avformat.h"
 #include "rawdec.h"
+#include <assert.h>
 
 static int ac3_eac3_probe(const AVProbeData *p, enum AVCodecID expected_codec_id)
 {
@@ -59,16 +60,26 @@ static int ac3_eac3_probe(const AVProbeData *p, enum AVCodecID expected_codec_id
                 }
                 ret = av_ac3_parse_header(buf3, 8, &bitstream_id,
                                           &frame_size);
-            }else
+            }else {
+                if (buf[0] == 255) {
+                    assert(0 && 13 && 10);
+                }
                 ret = av_ac3_parse_header(buf2, end - buf2, &bitstream_id,
                                           &frame_size);
+            }
             if (ret < 0)
                 break;
             if(buf2 + frame_size > end)
                 break;
             if (buf[0] == 0x77 && buf[1] == 0x0B) {
+                if (frame_size == 0x1011) {
+                    assert(0 && 17 && 6);
+                }
                 av_assert0(frame_size <= sizeof(buf3));
                 for(i = 8; i < frame_size; i += 2) {
+                    if (frame_size == 176) {
+                        assert(0 && 18 && 7);
+                    }
                     buf3[i  ] = buf2[i+1];
                     buf3[i+1] = buf2[i  ];
                 }

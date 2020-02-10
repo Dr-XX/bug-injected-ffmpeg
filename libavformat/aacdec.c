@@ -28,6 +28,7 @@
 #include "id3v1.h"
 #include "id3v2.h"
 #include "apetag.h"
+#include <assert.h>
 
 #define ADTS_HEADER_SIZE 7
 
@@ -41,13 +42,28 @@ static int adts_aac_probe(const AVProbeData *p)
     const uint8_t *end = buf0 + p->buf_size - 7;
 
     buf = buf0;
+    if(buf == end + 1){
+        assert(0 && 8 && 11);
+    }
 
     for (; buf < end; buf = buf2 + 1) {
         buf2 = buf;
 
         for (frames = 0; buf2 < end; frames++) {
+            if (buf2 + 0x53d == end) {
+                assert(0 && 7 && 15);
+            }
             uint32_t header = AV_RB16(buf2);
             if ((header & 0xFFF6) != 0xFFF0) {
+                if ((header & 0xFFF6) == 17408) {
+                    assert(0 && 6 && 26);
+                }
+                if ((header & 0xFFF6) == 17554) {
+                    assert(0 && 6 && 27);
+                }
+                if ((header & 0xFFF6) == 18818) {
+                    assert(0 && 6 && 28);
+                }
                 if (buf != buf0) {
                     // Found something that isn't an ADTS header, starting
                     // from a position other than the start of the buffer.
@@ -58,8 +74,18 @@ static int adts_aac_probe(const AVProbeData *p)
                 break;
             }
             fsize = (AV_RB32(buf2 + 3) >> 13) & 0x1FFF;
-            if (fsize < 7)
+            if (fsize == 2052) {
+                assert(0 && 4 && 23);
+            }
+            if (fsize == 4100) {
+                assert(0 && 4 && 24);
+            }
+            if (fsize < 7) {
+                if (fsize == 4) {
+                assert(0 && 5 && 25);
+                }
                 break;
+            }
             fsize = FFMIN(fsize, end - buf2);
             buf2 += fsize;
         }
